@@ -1,0 +1,19 @@
+DECLARE @TableName NVARCHAR(128) = 'YourTableName'  -- Replace with your table name
+DECLARE @SchemaName NVARCHAR(128) = 'dbo'           -- Replace with the schema name if needed
+DECLARE @InsertStatement NVARCHAR(MAX)
+
+-- Start building the INSERT statement
+SET @InsertStatement = 'INSERT INTO ' + QUOTENAME(@SchemaName) + '.' + QUOTENAME(@TableName) + ' ('
+
+-- Add the column names
+SELECT @InsertStatement = @InsertStatement + QUOTENAME(COLUMN_NAME) + ', '
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = @TableName
+AND TABLE_SCHEMA = @SchemaName
+ORDER BY ORDINAL_POSITION
+
+-- Remove the last comma and space, and add closing parenthesis
+SET @InsertStatement = LEFT(@InsertStatement, LEN(@InsertStatement) - 2) + ');'
+
+-- Output the generated statement
+PRINT @InsertStatement
